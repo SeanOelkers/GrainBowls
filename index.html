@@ -1,0 +1,1149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grain Bowl Weekly Planner</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .nav-tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 1px solid #ddd;
+            overflow-x: auto;
+        }
+        
+        .nav-tab {
+            padding: 15px 25px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-size: 16px;
+            font-weight: 500;
+            color: #666;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            min-width: 120px;
+        }
+        
+        .nav-tab.active {
+            background: white;
+            color: #4CAF50;
+            border-bottom: 3px solid #4CAF50;
+        }
+        
+        .nav-tab:hover {
+            background: #e9ecef;
+            color: #333;
+        }
+        
+        .content {
+            padding: 30px;
+            min-height: 500px;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .meal-card {
+            background: #fff;
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: transform 0.2s ease;
+        }
+        
+        .meal-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        
+        .meal-title {
+            color: #4CAF50;
+            font-size: 1.4em;
+            font-weight: 600;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .day-badge {
+            background: #4CAF50;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 5px;
+            font-size: 0.8em;
+            font-weight: normal;
+        }
+        
+        .meal-components {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .component {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 8px;
+            border-left: 4px solid #4CAF50;
+        }
+        
+        .component-label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        
+        .component-value {
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        .shopping-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        
+        .shopping-section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+        }
+        
+        .shopping-section h3 {
+            color: #4CAF50;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 5px;
+        }
+        
+        .shopping-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            padding: 5px;
+            border-radius: 5px;
+            transition: background 0.2s ease;
+            cursor: pointer;
+        }
+        
+        .shopping-item:hover {
+            background: white;
+        }
+        
+        .shopping-item input[type="checkbox"] {
+            margin-right: 10px;
+            transform: scale(1.2);
+            accent-color: #4CAF50;
+            cursor: pointer;
+        }
+        
+        .shopping-item.checked {
+            text-decoration: line-through;
+            opacity: 0.6;
+        }
+        
+        .dressing-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .dressing-title {
+            color: #4CAF50;
+            font-size: 1.3em;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .dressing-subtitle {
+            color: #666;
+            font-style: italic;
+            margin-bottom: 15px;
+        }
+        
+        .ingredients, .instructions {
+            margin-bottom: 15px;
+        }
+        
+        .ingredients h4, .instructions h4 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+        
+        .ingredients ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        
+        .ingredients li {
+            padding: 3px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+        
+        .ingredients li:before {
+            content: "•";
+            color: #4CAF50;
+            position: absolute;
+            left: 0;
+        }
+        
+        .instructions ol {
+            padding-left: 20px;
+        }
+        
+        .instructions li {
+            margin-bottom: 5px;
+        }
+        
+        .prep-timeline {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .prep-timeline h3 {
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        
+        .timeline-item {
+            margin-bottom: 10px;
+            padding-left: 20px;
+            position: relative;
+        }
+        
+        .timeline-item:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            top: 0;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+        
+        .total-estimate {
+            background: #e8f5e8;
+            border: 1px solid #4CAF50;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .price-range {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #4CAF50;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 15px;
+            }
+            
+            .header {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .meal-components {
+                grid-template-columns: 1fr;
+            }
+            
+            .shopping-list {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🥗 Grain Bowl Weekly Planner</h1>
+            <p>Your complete guide to a week of healthy, delicious grain bowls</p>
+        </div>
+        
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="showTab('meal-plan')">📅 Meal Plan</button>
+            <button class="nav-tab" onclick="showTab('shopping')">🛒 Shopping List</button>
+            <button class="nav-tab" onclick="showTab('proteins')">🥩 Proteins</button>
+            <button class="nav-tab" onclick="showTab('dressings')">🥄 Dressings</button>
+            <button class="nav-tab" onclick="showTab('prep')">⏰ Prep Guide</button>
+        </div>
+        
+        <div class="content">
+            <!-- Meal Plan Tab -->
+            <div id="meal-plan" class="tab-content active">
+                <div class="meal-card">
+                    <div class="meal-title">
+                        <span class="day-badge">MON</span>
+                        Mediterranean Bowl
+                    </div>
+                    <div class="meal-components">
+                        <div class="component">
+                            <div class="component-label">Base</div>
+                            <div class="component-value">Quinoa</div>
+                        </div>
+                        <div class="component">
+                            <div class="component-label">Protein</div>
+                            <div class="component-value">Grilled chicken with lemon-herb marinade</div>
+                        </div>
+                        <div class="component">
+                            <div class="component-label">Vegetables</div>
+                            <div class="component-value">Roasted red peppers, cucumber, cherry tomatoes</div>
+                        </div>
+                        <div class="component">
+                            <div class="component-label">Additions</div>
+                            <div class="component-value">Kalamata olives, feta cheese, red onion</div>
+                        </div>
+                        <div class="component">
+                            <div class="component-label">Dressing</div>
+                            <div class="component-value">Olive oil-lemon vinaigrette with oregano</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="meal-card">
+                    <div class="meal-title">
+                        <span class="day-badge">TUE</span>
+                        Asian-Inspired Bowl
+                    </div>
+                    <div class="meal-components">
+                        <div class="component">
+                            <div class="component-label">Base</div>
+                            <div class="component-value">Brown rice</div>
+                        </div>
+                        <div class="component">
+                            <div class="component-label">Protein</div>
+                            <div class="component-value">Baked tofu with soy-ginger marinade</div>
+                        </div>
+                        <div class="component">
+                            <div class="component-label">Vegetables</div>
+                            <div class="component-value">Steamed broccoli, shredded carrots, edamame</div>
+                        </div>
+                        <div class="component">
+                            <div class="component-label">Additions</div>
+                            <div class="component-value">Avocado, sesame seeds, nori sheets</div>
+                        </div>
+                        <div class="component">
+                            <div class="component-label">Dressing</div>
+                            <div class="component-value">Tahini-miso dressing with rice vinegar</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="meal-card">
+                    <div class="meal-title">
+                        <span class="day-badge">WED</span>
+                        Southwest Bowl
+                    </div>
+                    <div class="meal-components">
+                        <div class="component">
+                            <div class="component-label">Base</div>
+                            <div class="component-value">Cilantro-lime brown rice</div>
+                        </div>
+                        <div class="component">
+                            <div class="component-label">Protein</div>
+                            <div class="component-value">Seasoned black beans and corn</div>
+                        </div>
+                        <div class="component">
+                            <div class="component-label">Vegetables</div>
+                            <div class="component-value">Roasted bell peppers, red onion, romaine</div>
+                        </div>
+                        <div class="component">
+                            <div class="component-label">Additions</div>
+                            <div class="component-value">Avocado, pumpkin seeds, queso fresco</div>
+                        </div>
+                        <div class="component">
+                            <div class="component-label">Dressing</div>
+                            <div class="component-value">Lime-cumin vinaigrette</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="meal-card">
+                    <div class="meal-title">
+                        <span class="day-badge">THU</span>
+                        Fall Harvest Bowl
+                    </div>
+                    <div class="meal-components">
+                        <div class="component">
+                            <div class="component-label">Base</div>
+                            <div class="component-value">Farro</div>
+                        </div>
+                        <div class="component">
+                            <div class="component-label">Protein</div>
+                            <div class="component-value">Roasted chickpeas with smoked paprika</div>
+                        </div>
+                        <div class="component">
+                            <div class="component-label">Vegetables</div>
+                            <div class="component-value">Roasted sweet potato, Brussels sprouts, kale</div>
+                        </div>
+                        <div class="component">
+                            <div class="component-label">Additions</div>
+                            <div class="component-value">Dried cranberries, goat cheese, walnuts</div>
+                        </div>
+                        <div class="component">
+                            <div class="component-label">Dressing</div>
+                            <div class="component-value">Apple cider vinegar-Dijon dressing</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="meal-card">
+                    <div class="meal-title">
+                        <span class="day-badge">FRI</span>
+                        Protein Power Bowl
+                    </div>
+                    <div class="meal-components">
+                        <div class="component">
+                            <div class="component-label">Base</div>
+                            <div class="component-value">Quinoa</div>
+                        </div>
+                        <div class="component">
+                            <div class="component-label">Protein</div>
+                            <div class="component-value">Baked salmon with herbs</div>
+                        </div>
+                        <div class="component">
+                            <div class="component-label">Vegetables</div>
+                            <div class="component-value">Steamed asparagus, cherry tomatoes, spinach</div>
+                        </div>
+                        <div class="component">
+                            <div class="component-label">Additions</div>
+                            <div class="component-value">Hard-boiled egg, hemp seeds, microgreens</div>
+                        </div>
+                        <div class="component">
+                            <div class="component-label">Dressing</div>
+                            <div class="component-value">Lemon-dill yogurt dressing</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="meal-card">
+                    <div class="meal-title">
+                        <span class="day-badge">SAT</span>
+                        Comfort Bowl
+                    </div>
+                    <div class="meal-components">
+                        <div class="component">
+                            <div class="component-label">Base</div>
+                            <div class="component-value">Wild rice blend</div>
+                        </div>
+                        <div class="component">
+                            <div class="component-label">Protein</div>
+                            <div class="component-value">Leftover grilled chicken (repurposed)</div>
+                        </div>
+                        <div class="component">
+                            <div class="component-label">Vegetables</div>
+                            <div class="component-value">Roasted root vegetables (carrots, parsnips)</div>
+                        </div>
+                        <div class="component">
+                            <div class="component-label">Additions</div>
+                            <div class="component-value">Dried herbs, pecans, aged cheddar</div>
+                        </div>
+                        <div class="component">
+                            <div class="component-label">Dressing</div>
+                            <div class="component-value">Balsamic reduction</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="meal-card">
+                    <div class="meal-title">
+                        <span class="day-badge">SUN</span>
+                        Clean-Out Bowl
+                    </div>
+                    <div class="meal-components">
+                        <div class="component">
+                            <div class="component-label">Base</div>
+                            <div class="component-value">Whatever grain remains</div>
+                        </div>
+                        <div class="component">
+                            <div class="component-label">Protein</div>
+                            <div class="component-value">Combine leftover proteins or make scrambled eggs</div>
+                        </div>
+                        <div class="component">
+                            <div class="component-label">Vegetables</div>
+                            <div class="component-value">Use up remaining roasted vegetables</div>
+                        </div>
+                        <div class="component">
+                            <div class="component-label">Additions</div>
+                            <div class="component-value">Any leftover nuts, seeds, or cheese</div>
+                        </div>
+                        <div class="component">
+                            <div class="component-label">Dressing</div>
+                            <div class="component-value">Simple olive oil and lemon</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Shopping List Tab -->
+            <div id="shopping" class="tab-content">
+                <div class="shopping-list">
+                    <div class="shopping-section">
+                        <h3>🥬 Produce Section</h3>
+                        <div class="shopping-item"><input type="checkbox"> 3 avocados</div>
+                        <div class="shopping-item"><input type="checkbox"> 1 lb fresh asparagus</div>
+                        <div class="shopping-item"><input type="checkbox"> 1 lb Brussels sprouts</div>
+                        <div class="shopping-item"><input type="checkbox"> 1 lb carrots</div>
+                        <div class="shopping-item"><input type="checkbox"> 1 pint cherry tomatoes</div>
+                        <div class="shopping-item"><input type="checkbox"> 2 large cucumbers</div>
+                        <div class="shopping-item"><input type="checkbox"> 1 large red onion</div>
+                        <div class="shopping-item"><input type="checkbox"> 2 bell peppers (red)</div>
+                        <div class="shopping-item"><input type="checkbox"> 1 bell pepper (yellow/orange)</div>
+                        <div class="shopping-item"><input type="checkbox"> 1 head broccoli</div>
+                        <div class="shopping-item"><input type="checkbox"> 1 bag fresh spinach (5 oz)</div>
+                        <div class="shopping-item"><input type="checkbox"> 1 container mixed greens (5 oz)</div>
+                        <div class="shopping-item"><input type="checkbox"> 1 bunch kale</div>
+                        <div class="shopping-item"><input type="checkbox"> 1 bag shredded carrots</div>
+                        <div class="shopping-item"><input type="checkbox"> 4 lemons</div>
+                        <div class="shopping-item"><input type="checkbox"> 3 limes</div>
+                        <div class="shopping-item"><input type="checkbox"> 1 container microgreens (optional)</div>
+                        <div class="shopping-item"><input type="checkbox"> 1 bunch fresh cilantro</div>
+                        <div class="shopping-item"><input type="checkbox"> 1 bunch fresh dill</div>
+                        <div class="shopping-item"><input type="checkbox"> 2 large sweet potatoes</div>
+                        <div class="shopping-item"><input type="checkbox"> 1 lb parsnips</div>
+                    </div>
+
+                    <div class="shopping-section">
+                        <h3>🥩 Meat & Seafood</h3>
+                        <div class="shopping-item"><input type="checkbox"> 2 lbs boneless chicken thighs</div>
+                        <div class="shopping-item"><input type="checkbox"> 1 lb salmon fillets</div>
+                    </div>
+
+                    <div class="shopping-section">
+                        <h3>🥛 Dairy & Refrigerated</h3>
+                        <div class="shopping-item"><input type="checkbox"> 1 dozen large eggs</div>
+                        <div class="shopping-item"><input type="checkbox"> 1 container Greek yogurt (32 oz, plain)</div>
+                        <div class="shopping-item"><input type="checkbox"> 1 package feta cheese (8 oz)</div>
+                        <div class="shopping-item"><input type="checkbox"> 1 container goat cheese (4 oz)</div>
+                        <div class="shopping-item"><input type="checkbox"> 1 package queso fresco (8 oz)</div>
+                        <div class="shopping-item"><input type="checkbox"> 1 block aged cheddar (8 oz)</div>
+                        <div class="shopping-item"><input type="checkbox"> 2 packages extra-firm tofu (14 oz each)</div>
+                    </div>
+
+                    <div class="shopping-section">
+                        <h3>🌾 Pantry & Dry Goods</h3>
+                        <div class="shopping-item"><input type="checkbox"> 2 lbs brown rice</div>
+                        <div class="shopping-item"><input type="checkbox"> 1 lb quinoa</div>
+                        <div class="shopping-item"><input type="checkbox"> 1 lb farro</div>
+                        <div class="shopping-item"><input type="checkbox"> 1 lb wild rice blend</div>
+                        <div class="shopping-item"><input type="checkbox"> 1 can black beans (15 oz)</div>
+                        <div class="shopping-item"><input type="checkbox"> 2 cans chickpeas (15 oz each)</div>
+                        <div class="shopping-item"><input type="checkbox"> 1 bag frozen edamame (shelled)</div>
+                    </div>
+
+                    <div class="shopping-section">
+                        <h3>🥜 Nuts, Seeds & Dried Fruit</h3>
+                        <div class="shopping-item"><input type="checkbox"> 1 bag raw walnuts (8 oz)</div>
+                        <div class="shopping-item"><input type="checkbox"> 1 bag pumpkin seeds/pepitas (6 oz)</div>
+                        <div class="shopping-item"><input type="checkbox"> 1 bag sesame seeds (small container)</div>
+                        <div class="shopping-item"><input type="checkbox"> 1 bag hemp seeds (8 oz)</div>
+                        <div class="shopping-item"><input type="checkbox"> 1 bag dried cranberries (6 oz)</div>
+                    </div>
+
+                    <div class="shopping-section">
+                        <h3>🫒 Oils, Vinegars & Condiments</h3>
+                        <div class="shopping-item"><input type="checkbox"> Extra virgin olive oil (if needed)</div>
+                        <div class="shopping-item"><input type="checkbox"> Apple cider vinegar</div>
+                        <div class="shopping-item"><input type="checkbox"> Balsamic vinegar</div>
+                        <div class="shopping-item"><input type="checkbox"> Rice vinegar</div>
+                        <div class="shopping-item"><input type="checkbox"> Dijon mustard</div>
+                        <div class="shopping-item"><input type="checkbox"> Tahini (sesame seed paste)</div>
+                        <div class="shopping-item"><input type="checkbox"> Miso paste (white/yellow)</div>
+                        <div class="shopping-item"><input type="checkbox"> Soy sauce (low sodium)</div>
+                        <div class="shopping-item"><input type="checkbox"> Kalamata olives (jar or container)</div>
+                        <div class="shopping-item"><input type="checkbox"> Nori sheets (small package)</div>
+                    </div>
+
+                    <div class="shopping-section">
+                        <h3>🌶️ Spices & Seasonings</h3>
+                        <div class="shopping-item"><input type="checkbox"> Smoked paprika</div>
+                        <div class="shopping-item"><input type="checkbox"> Ground cumin</div>
+                        <div class="shopping-item"><input type="checkbox"> Dried oregano</div>
+                        <div class="shopping-item"><input type="checkbox"> Garlic powder</div>
+                        <div class="shopping-item"><input type="checkbox"> Onion powder</div>
+                        <div class="shopping-item"><input type="checkbox"> Ground ginger</div>
+                        <div class="shopping-item"><input type="checkbox"> Sesame oil (small bottle)</div>
+                    </div>
+                </div>
+
+                <div class="total-estimate">
+                    <div class="price-range">Estimated Total: $80-120</div>
+                    <p>Price varies based on organic choices, sales, and items you already have</p>
+                </div>
+            </div>
+
+            <!-- Proteins Tab -->
+            <div id="proteins" class="tab-content">
+                <div class="dressing-card">
+                    <div class="dressing-title">Lemon-Herb Grilled Chicken Thighs</div>
+                    <div class="dressing-subtitle">For Monday's Mediterranean Bowl & Saturday's Comfort Bowl</div>
+                    <div class="ingredients">
+                        <h4>Ingredients:</h4>
+                        <ul>
+                            <li>2 lbs boneless chicken thighs</li>
+                            <li>1/4 cup olive oil</li>
+                            <li>3 tablespoons fresh lemon juice</li>
+                            <li>3 cloves garlic, minced</li>
+                            <li>2 teaspoons dried oregano</li>
+                            <li>1 teaspoon dried rosemary</li>
+                            <li>1 teaspoon salt</li>
+                            <li>1/2 teaspoon black pepper</li>
+                        </ul>
+                    </div>
+                    <div class="instructions">
+                        <h4>Instructions:</h4>
+                        <ol>
+                            <li>Whisk together olive oil, lemon juice, garlic, oregano, rosemary, salt, and pepper</li>
+                            <li>Marinate chicken in mixture for at least 30 minutes (up to 4 hours)</li>
+                            <li>Preheat grill or grill pan to medium-high heat</li>
+                            <li>Grill chicken 6-8 minutes per side until internal temp reaches 165°F</li>
+                            <li>Let rest 5 minutes, then slice or chop</li>
+                            <li>Makes enough for multiple bowls throughout the week</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div class="dressing-card">
+                    <div class="dressing-title">Soy-Ginger Baked Tofu</div>
+                    <div class="dressing-subtitle">For Tuesday's Asian-Inspired Bowl</div>
+                    <div class="ingredients">
+                        <h4>Ingredients:</h4>
+                        <ul>
+                            <li>2 blocks (28 oz total) extra-firm tofu</li>
+                            <li>3 tablespoons soy sauce</li>
+                            <li>2 tablespoons rice vinegar</li>
+                            <li>1 tablespoon sesame oil</li>
+                            <li>1 tablespoon fresh ginger, grated</li>
+                            <li>2 cloves garlic, minced</li>
+                            <li>1 teaspoon honey or maple syrup</li>
+                            <li>1/4 teaspoon red pepper flakes (optional)</li>
+                        </ul>
+                    </div>
+                    <div class="instructions">
+                        <h4>Instructions:</h4>
+                        <ol>
+                            <li>Press tofu between paper towels for 15 minutes to remove moisture</li>
+                            <li>Cut into 3/4-inch cubes</li>
+                            <li>Whisk together soy sauce, vinegar, sesame oil, ginger, garlic, honey, and red pepper flakes</li>
+                            <li>Marinate tofu in mixture for 15-30 minutes</li>
+                            <li>Preheat oven to 400°F</li>
+                            <li>Spread tofu on parchment-lined baking sheet</li>
+                            <li>Bake 25-30 minutes, flipping halfway through, until golden and crispy</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div class="dressing-card">
+                    <div class="dressing-title">Seasoned Black Beans</div>
+                    <div class="dressing-subtitle">For Wednesday's Southwest Bowl</div>
+                    <div class="ingredients">
+                        <h4>Ingredients:</h4>
+                        <ul>
+                            <li>1 can (15 oz) black beans, drained and rinsed</li>
+                            <li>1 tablespoon olive oil</li>
+                            <li>1/2 onion, diced</li>
+                            <li>2 cloves garlic, minced</li>
+                            <li>1 teaspoon ground cumin</li>
+                            <li>1/2 teaspoon chili powder</li>
+                            <li>1/4 teaspoon smoked paprika</li>
+                            <li>1/4 cup vegetable broth or water</li>
+                            <li>Salt and pepper to taste</li>
+                            <li>1 cup corn kernels (frozen or fresh)</li>
+                        </ul>
+                    </div>
+                    <div class="instructions">
+                        <h4>Instructions:</h4>
+                        <ol>
+                            <li>Heat oil in a large skillet over medium heat</li>
+                            <li>Sauté onion until softened, about 5 minutes</li>
+                            <li>Add garlic, cumin, chili powder, and paprika; cook 1 minute</li>
+                            <li>Add black beans, corn, and broth</li>
+                            <li>Simmer 8-10 minutes until flavors meld</li>
+                            <li>Season with salt and pepper to taste</li>
+                            <li>Can be served warm or at room temperature</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div class="dressing-card">
+                    <div class="dressing-title">Smoked Paprika Roasted Chickpeas</div>
+                    <div class="dressing-subtitle">For Thursday's Fall Harvest Bowl</div>
+                    <div class="ingredients">
+                        <h4>Ingredients:</h4>
+                        <ul>
+                            <li>2 cans (15 oz each) chickpeas, drained and rinsed</li>
+                            <li>2 tablespoons olive oil</li>
+                            <li>1 teaspoon smoked paprika</li>
+                            <li>1/2 teaspoon ground cumin</li>
+                            <li>1/2 teaspoon garlic powder</li>
+                            <li>1/4 teaspoon cayenne pepper</li>
+                            <li>3/4 teaspoon salt</li>
+                            <li>1/4 teaspoon black pepper</li>
+                        </ul>
+                    </div>
+                    <div class="instructions">
+                        <h4>Instructions:</h4>
+                        <ol>
+                            <li>Preheat oven to 400°F</li>
+                            <li>Pat chickpeas completely dry with paper towels</li>
+                            <li>Toss with olive oil and all spices until evenly coated</li>
+                            <li>Spread on a rimmed baking sheet in single layer</li>
+                            <li>Roast 25-35 minutes, shaking pan halfway through</li>
+                            <li>Chickpeas should be golden and slightly crispy</li>
+                            <li>Best served warm but good at room temperature too</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div class="dressing-card">
+                    <div class="dressing-title">Herb-Baked Salmon</div>
+                    <div class="dressing-subtitle">For Friday's Protein Power Bowl</div>
+                    <div class="ingredients">
+                        <h4>Ingredients:</h4>
+                        <ul>
+                            <li>1 lb salmon fillets</li>
+                            <li>2 tablespoons olive oil</li>
+                            <li>2 tablespoons fresh lemon juice</li>
+                            <li>2 tablespoons fresh dill, chopped</li>
+                            <li>1 tablespoon fresh parsley, chopped</li>
+                            <li>2 cloves garlic, minced</li>
+                            <li>3/4 teaspoon salt</li>
+                            <li>1/4 teaspoon black pepper</li>
+                            <li>Lemon slices for garnish</li>
+                        </ul>
+                    </div>
+                    <div class="instructions">
+                        <h4>Instructions:</h4>
+                        <ol>
+                            <li>Preheat oven to 425°F</li>
+                            <li>Line a baking sheet with parchment paper</li>
+                            <li>Mix olive oil, lemon juice, dill, parsley, garlic, salt, and pepper</li>
+                            <li>Place salmon on prepared baking sheet</li>
+                            <li>Brush herb mixture over salmon fillets</li>
+                            <li>Top with lemon slices</li>
+                            <li>Bake 12-15 minutes until fish flakes easily with a fork</li>
+                            <li>Internal temperature should reach 145°F</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div class="dressing-card">
+                    <div class="dressing-title">Perfect Hard-Boiled Eggs</div>
+                    <div class="dressing-subtitle">For Friday's Protein Power Bowl & Sunday's Clean-Out Bowl</div>
+                    <div class="ingredients">
+                        <h4>Ingredients:</h4>
+                        <ul>
+                            <li>6-8 large eggs</li>
+                            <li>Water for boiling</li>
+                            <li>Ice water for cooling</li>
+                        </ul>
+                    </div>
+                    <div class="instructions">
+                        <h4>Instructions:</h4>
+                        <ol>
+                            <li>Bring a large pot of water to a rolling boil</li>
+                            <li>Gently lower eggs into boiling water with a slotted spoon</li>
+                            <li>Cook for exactly 10 minutes for firm yolks</li>
+                            <li>Immediately transfer to ice water bath</li>
+                            <li>Let cool for 5 minutes</li>
+                            <li>Peel under cool running water</li>
+                            <li>Store peeled eggs in refrigerator up to 1 week</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div class="meal-card">
+                    <div class="meal-title">🔄 Protein Prep Tips</div>
+                    <div style="margin-top: 15px;">
+                        <p><strong>Batch Cooking:</strong> Cook proteins in larger quantities on Sunday to use throughout the week.</p>
+                        <br>
+                        <p><strong>Storage:</strong> Store cooked proteins in airtight containers in the refrigerator for up to 4 days.</p>
+                        <br>
+                        <p><strong>Reheating:</strong> Warm proteins gently in microwave or skillet before adding to bowls for best texture.</p>
+                        <br>
+                        <p><strong>Food Safety:</strong> Always use a meat thermometer - chicken should reach 165°F, salmon 145°F.</p>
+                        <br>
+                        <p><strong>Versatility:</strong> These proteins can be repurposed in different bowls throughout the week for variety.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dressings Tab -->
+            <div id="dressings" class="tab-content">
+                <div class="dressing-card">
+                    <div class="dressing-title">Olive Oil-Lemon Vinaigrette with Oregano</div>
+                    <div class="dressing-subtitle">For Monday's Mediterranean Bowl</div>
+                    <div class="ingredients">
+                        <h4>Ingredients:</h4>
+                        <ul>
+                            <li>1/4 cup extra virgin olive oil</li>
+                            <li>2 tablespoons fresh lemon juice</li>
+                            <li>1 tablespoon red wine vinegar</li>
+                            <li>1 teaspoon dried oregano</li>
+                            <li>1 clove garlic, minced</li>
+                            <li>1/2 teaspoon Dijon mustard</li>
+                            <li>1/4 teaspoon salt</li>
+                            <li>1/8 teaspoon black pepper</li>
+                        </ul>
+                    </div>
+                    <div class="instructions">
+                        <h4>Instructions:</h4>
+                        <ol>
+                            <li>Whisk all ingredients together in a small bowl</li>
+                            <li>Store in mason jar, shake before using</li>
+                            <li>Makes about 1/2 cup</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div class="dressing-card">
+                    <div class="dressing-title">Tahini-Miso Dressing</div>
+                    <div class="dressing-subtitle">For Tuesday's Asian-Inspired Bowl</div>
+                    <div class="ingredients">
+                        <h4>Ingredients:</h4>
+                        <ul>
+                            <li>3 tablespoons tahini</li>
+                            <li>2 tablespoons rice vinegar</li>
+                            <li>1 tablespoon miso paste (white or yellow)</li>
+                            <li>1 tablespoon soy sauce</li>
+                            <li>1 teaspoon sesame oil</li>
+                            <li>1 teaspoon fresh ginger, grated</li>
+                            <li>1 teaspoon honey or maple syrup</li>
+                            <li>2-3 tablespoons warm water (to thin)</li>
+                        </ul>
+                    </div>
+                    <div class="instructions">
+                        <h4>Instructions:</h4>
+                        <ol>
+                            <li>Whisk tahini and miso paste until smooth</li>
+                            <li>Add vinegar, soy sauce, sesame oil, ginger, and honey</li>
+                            <li>Slowly whisk in warm water until desired consistency</li>
+                            <li>Store in refrigerator, stir before using</li>
+                            <li>Makes about 1/2 cup</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div class="dressing-card">
+                    <div class="dressing-title">Lime-Cumin Vinaigrette</div>
+                    <div class="dressing-subtitle">For Wednesday's Southwest Bowl</div>
+                    <div class="ingredients">
+                        <h4>Ingredients:</h4>
+                        <ul>
+                            <li>1/4 cup olive oil</li>
+                            <li>2 tablespoons fresh lime juice</li>
+                            <li>1 tablespoon apple cider vinegar</li>
+                            <li>1 teaspoon ground cumin</li>
+                            <li>1/2 teaspoon chili powder</li>
+                            <li>1 clove garlic, minced</li>
+                            <li>1/4 teaspoon salt</li>
+                            <li>1/8 teaspoon cayenne pepper (optional)</li>
+                        </ul>
+                    </div>
+                    <div class="instructions">
+                        <h4>Instructions:</h4>
+                        <ol>
+                            <li>Combine all ingredients in a jar with tight lid</li>
+                            <li>Shake vigorously until emulsified</li>
+                            <li>Let sit 10 minutes for flavors to meld</li>
+                            <li>Makes about 1/2 cup</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div class="dressing-card">
+                    <div class="dressing-title">Apple Cider Vinegar-Dijon Dressing</div>
+                    <div class="dressing-subtitle">For Thursday's Fall Harvest Bowl</div>
+                    <div class="ingredients">
+                        <h4>Ingredients:</h4>
+                        <ul>
+                            <li>1/4 cup olive oil</li>
+                            <li>2 tablespoons apple cider vinegar</li>
+                            <li>1 tablespoon Dijon mustard</li>
+                            <li>1 tablespoon honey</li>
+                            <li>1 shallot, minced (or 2 tablespoons red onion)</li>
+                            <li>1/4 teaspoon salt</li>
+                            <li>1/8 teaspoon black pepper</li>
+                        </ul>
+                    </div>
+                    <div class="instructions">
+                        <h4>Instructions:</h4>
+                        <ol>
+                            <li>Whisk mustard and honey until smooth</li>
+                            <li>Slowly whisk in vinegar, then gradually add olive oil</li>
+                            <li>Stir in shallot, salt, and pepper</li>
+                            <li>Taste and adjust seasoning</li>
+                            <li>Makes about 1/2 cup</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div class="dressing-card">
+                    <div class="dressing-title">Lemon-Dill Yogurt Dressing</div>
+                    <div class="dressing-subtitle">For Friday's Protein Power Bowl</div>
+                    <div class="ingredients">
+                        <h4>Ingredients:</h4>
+                        <ul>
+                            <li>1/2 cup plain Greek yogurt</li>
+                            <li>2 tablespoons fresh lemon juice</li>
+                            <li>1 tablespoon olive oil</li>
+                            <li>2 tablespoons fresh dill, chopped</li>
+                            <li>1 clove garlic, minced</li>
+                            <li>1/4 teaspoon salt</li>
+                            <li>1/8 teaspoon black pepper</li>
+                            <li>1-2 tablespoons water (if needed to thin)</li>
+                        </ul>
+                    </div>
+                    <div class="instructions">
+                        <h4>Instructions:</h4>
+                        <ol>
+                            <li>Whisk yogurt until smooth</li>
+                            <li>Add lemon juice, olive oil, dill, garlic, salt, and pepper</li>
+                            <li>Thin with water if needed</li>
+                            <li>Best used within 3-4 days</li>
+                            <li>Makes about 3/4 cup</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div class="dressing-card">
+                    <div class="dressing-title">Balsamic Reduction</div>
+                    <div class="dressing-subtitle">For Saturday's Comfort Bowl</div>
+                    <div class="ingredients">
+                        <h4>Ingredients:</h4>
+                        <ul>
+                            <li>1/2 cup balsamic vinegar</li>
+                            <li>1 tablespoon honey</li>
+                            <li>1 tablespoon olive oil (to finish)</li>
+                        </ul>
+                    </div>
+                    <div class="instructions">
+                        <h4>Instructions:</h4>
+                        <ol>
+                            <li>Simmer balsamic vinegar in small saucepan over medium heat</li>
+                            <li>Reduce by half (about 10-15 minutes)</li>
+                            <li>Stir in honey</li>
+                            <li>Let cool slightly, then whisk in olive oil</li>
+                            <li>Drizzle over bowl just before serving</li>
+                            <li>Makes about 1/4 cup</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div class="dressing-card">
+                    <div class="dressing-title">Simple Olive Oil and Lemon</div>
+                    <div class="dressing-subtitle">For Sunday's Clean-Out Bowl</div>
+                    <div class="ingredients">
+                        <h4>Ingredients:</h4>
+                        <ul>
+                            <li>3 tablespoons olive oil</li>
+                            <li>1 tablespoon fresh lemon juice</li>
+                            <li>Pinch of salt</li>
+                            <li>Fresh herbs (whatever you have left)</li>
+                        </ul>
+                    </div>
+                    <div class="instructions">
+                        <h4>Instructions:</h4>
+                        <ol>
+                            <li>Simply whisk together and drizzle over bowl</li>
+                            <li>Add any leftover fresh herbs</li>
+                            <li>Makes enough for 2-3 bowls</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div class="meal-card">
+                    <div class="meal-title">🥄 Dressing Storage Tips</div>
+                    <div style="margin-top: 15px;">
+                        <p>• Most vinaigrettes keep 1-2 weeks in refrigerator</p>
+                        <p>• Yogurt-based dressings use within 3-4 days</p>
+                        <p>• Always bring to room temperature before using</p>
+                        <p>• Store in small mason jars for easy shaking</p>
+                        <p>• Double recipes if you want extra for salads</p>
+                        <p>• Vinaigrettes actually improve in flavor after sitting overnight</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Prep Guide Tab -->
+            <div id="prep" class="tab-content">
+                <div class="prep-timeline">
+                    <h3>📅 Sunday Prep Session (2-3 hours)</h3>
+                    <div class="timeline-item">Cook grains in batches: Make 2-3 cups dry grains total</div>
+                    <div class="timeline-item">Roast vegetables: Cut and roast 2-3 sheet pans of mixed vegetables</div>
+                    <div class="timeline-item">Prep proteins: Marinate chicken, press tofu, cook beans/lentils</div>
+                    <div class="timeline-item">Make 2-3 dressings: Store in small mason jars</div>
+                    <div class="timeline-item">Wash and prep fresh vegetables: Store in containers</div>
+                </div>
+
+                <div class="prep-timeline">
+                    <h3>🔄 Mid-Week Refresh (Wednesday, 30 minutes)</h3>
+                    <div class="timeline-item">Cook fresh protein if needed</div>
+                    <div class="timeline-item">Prep any remaining fresh vegetables</div>
+                    <div class="timeline-item">Check dressing supplies</div>
+                </div>
+
+                <div class="meal-card">
+                    <div class="meal-title">💡 Tips for Success</div>
+                    <div style="margin-top: 15px;">
+                        <p><strong>Portion Control:</strong> Plan for about 3/4 cup cooked grain, 4-6 oz protein, and 1-2 cups vegetables per bowl.</p>
+                        <br>
+                        <p><strong>Flavor Balance:</strong> Each bowl should have something creamy (avocado, cheese, yogurt dressing), something crunchy (nuts, seeds, fresh vegetables), and something acidic (citrus, vinegar).</p>
+                        <br>
+                        <p><strong>Storage:</strong> Assemble bowls without dressing, store components separately, and dress just before eating.</p>
+                        <br>
+                        <p><strong>Customization:</strong> Keep extra toppings available so family members can customize their bowls to preference.</p>
+                        <br>
+                        <p><strong>Temperature:</strong> Warm your grains and proteins, keep fresh elements cool for the best contrast and food safety.</p>
+                    </div>
+                </div>
+
+                <div class="meal-card">
+                    <div class="meal-title">⏰ Make-Ahead Strategy</div>
+                    <div style="margin-top: 15px;">
+                        <p>• Make 3-4 dressings on Sunday</p>
+                        <p>• The tahini-miso and yogurt dressings are most perishable</p>
+                        <p>• Vinaigrettes actually improve in flavor after sitting overnight</p>
+                        <p>• Keep one simple backup (olive oil + lemon) for emergencies</p>
+                        <p>• Cook proteins in larger batches for easy reheating</p>
+                        <p>• Roasted vegetables can be eaten cold or reheated</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showTab(tabName) {
+            // Hide all tab contents
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach(content => {
+                content.classList.remove('active');
+            });
+
+            // Remove active class from all nav tabs
+            const navTabs = document.querySelectorAll('.nav-tab');
+            navTabs.forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Show selected tab content
+            document.getElementById(tabName).classList.add('active');
+
+            // Add active class to clicked nav tab
+            event.target.classList.add('active');
+        }
+
+        // Add functionality to shopping list checkboxes
+        document.addEventListener('DOMContentLoaded', function() {
+            const checkboxes = document.querySelectorAll('#shopping input[type="checkbox"]');
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    const item = this.closest('.shopping-item');
+                    if (this.checked) {
+                        item.classList.add('checked');
+                    } else {
+                        item.classList.remove('checked');
+                    }
+                });
+            });
+        });
+
+        // Add click functionality to shopping items (clicking anywhere toggles checkbox)
+        document.addEventListener('DOMContentLoaded', function() {
+            const shoppingItems = document.querySelectorAll('.shopping-item');
+            shoppingItems.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    if (e.target.type !== 'checkbox') {
+                        const checkbox = this.querySelector('input[type="checkbox"]');
+                        checkbox.checked = !checkbox.checked;
+                        checkbox.dispatchEvent(new Event('change'));
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
+                
